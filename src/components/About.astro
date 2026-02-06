@@ -5,6 +5,7 @@
   <h2>About</h2>
   <div class="about-content">
     <img
+      id="profile-pic"
       src="/images/profile.png"
       alt="Raveen Savinda Rathnayake"
       width="100"
@@ -49,3 +50,27 @@
     }
   }
 </style>
+
+<script is:inline>
+  (function () {
+    var pic = document.getElementById('profile-pic');
+    if (!pic) return;
+
+    var clickCount = 0;
+    var clickTimer;
+    var audio = new Audio('/audio/super-max.mp3');
+
+    pic.addEventListener('click', function () {
+      clickCount++;
+      clearTimeout(clickTimer);
+
+      if (clickCount === 3) {
+        clickCount = 0;
+        audio.currentTime = 0;
+        audio.play();
+      } else {
+        clickTimer = setTimeout(function () { clickCount = 0; }, 400);
+      }
+    });
+  })();
+</script>

@@ -3,7 +3,12 @@ const year = new Date().getFullYear();
 ---
 
 <footer>
-  <p>&copy; {year} Raveen Savinda Rathnayake</p>
+  <p>
+    <span class="copyright" title="If you're reading this, we probably get along">
+      <span class="copy-symbol">&copy;</span>
+      <span class="copy-three">#3</span>
+    </span> {year} Raveen Savinda Rathnayake
+  </p>
 </footer>
 
 <style>
@@ -17,5 +22,38 @@ const year = new Date().getFullYear();
     font-size: 0.8rem;
     color: var(--text-secondary);
     text-align: center;
+  }
+
+  .copyright {
+    cursor: default;
+    position: relative;
+    display: inline-block;
+  }
+
+  .copy-symbol,
+  .copy-three {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .copy-three {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    color: #1e2452;
+    font-weight: 600;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  .copyright:hover .copy-symbol {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  .copyright:hover .copy-three {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
   }
 </style>

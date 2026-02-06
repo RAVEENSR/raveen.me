@@ -56,9 +56,122 @@ const {
     <div class="container">
       <slot />
     </div>
+
+    <!-- Konami code overlay -->
+    <div id="checkered-overlay" class="checkered-overlay" aria-hidden="true"></div>
+    <div id="konami-badge" class="konami-badge" aria-hidden="true">3</div>
   </body>
 </html>
 
 <style is:global>
   @import '../styles/global.css';
+
+  .checkered-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+    background: repeating-conic-gradient(#111 0% 25%, #fff 0% 50%) 0 0 / 40px 40px;
+    transition: opacity 0.3s ease;
+  }
+
+  .checkered-overlay.flash {
+    animation: checkered-flash 0.8s ease-out;
+  }
+
+  @keyframes checkered-flash {
+    0% { opacity: 0.9; }
+    100% { opacity: 0; }
+  }
+
+  .konami-badge {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 10000;
+    background: #e30613;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.2rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: scale(0);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+    font-family: var(--font-mono, ui-monospace, monospace);
+  }
+
+  .konami-badge.visible {
+    opacity: 1;
+    transform: scale(1);
+  }
 </style>
+
+<script>
+  // --- Console message ---
+  console.log(
+    '%c\u{1F3CE}\uFE0F Sector 1: Clear\n\u{1F3C1} "Simply simply lovely"\n#3 // If you found this, we\'d get along.',
+    'color: #e30613; font-size: 12px; font-weight: bold;'
+  );
+
+  // --- Tab title easter egg ---
+  (function () {
+    const originalTitle = document.title;
+    document.addEventListener('visibilitychange', () => {
+      document.title = document.hidden ? 'Box Box! \u{1F6DE}' : originalTitle;
+    });
+  })();
+
+  // --- Konami code easter egg ---
+  (function () {
+    const code = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+    let index = 0;
+
+    document.addEventListener('keydown', (e) => {
+      const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+      if (key === code[index]) {
+        index++;
+        if (index === code.length) {
+          index = 0;
+          activateF1Mode();
+        }
+      } else {
+        index = e.key === code[0] ? 1 : 0;
+      }
+    });
+
+    function activateF1Mode() {
+      console.log('Box box box! \u{1F3C1} Welcome to the grid.');
+
+      // Checkered flag flash
+      const overlay = document.getElementById('checkered-overlay');
+      if (overlay) {
+        overlay.classList.remove('flash');
+        void overlay.offsetWidth; // force reflow
+        overlay.classList.add('flash');
+      }
+
+      // Show #3 badge
+      const badge = document.getElementById('konami-badge');
+      if (badge) {
+        badge.classList.add('visible');
+        setTimeout(() => badge.classList.remove('visible'), 4000);
+      }
+
+      // Shift accent to Red Bull red
+      document.documentElement.style.setProperty('--accent', '#e30613');
+      document.documentElement.style.setProperty('--accent-hover', '#c00510');
+
+      setTimeout(() => {
+        document.documentElement.style.removeProperty('--accent');
+        document.documentElement.style.removeProperty('--accent-hover');
+      }, 10000);
+    }
+  })();
+</script>
