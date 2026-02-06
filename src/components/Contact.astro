@@ -1,0 +1,53 @@
+---
+const links = [
+  { label: 'email', url: 'mailto:contact@raveen.me' },
+  { label: 'github', url: 'https://github.com/raveensr' },
+  { label: 'linkedin', url: 'https://www.linkedin.com/in/raveensr/' },
+  { label: 'medium', url: 'https://medium.com/@raveensr' },
+  { label: 'researchgate', url: 'https://www.researchgate.net/profile/Raveen-Rathnayake-2' },
+];
+---
+
+<section id="contact" class="centered">
+  <h2 class="section-title">Let's Connect</h2>
+  <div class="links">
+    {links.map((link, i) => (
+      <>
+        <a href={link.url} target={link.url.startsWith('mailto:') ? undefined : '_blank'} rel="noopener noreferrer">
+          {link.label}
+        </a>
+        {i < links.length - 1 && <span class="sep">&middot;</span>}
+      </>
+    ))}
+  </div>
+</section>
+
+<style>
+  .centered {
+    text-align: center;
+  }
+
+  .section-title {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: var(--space-sm);
+  }
+
+  .links a {
+    font-size: 0.9rem;
+  }
+
+  .sep {
+    color: var(--border);
+    user-select: none;
+  }
+</style>

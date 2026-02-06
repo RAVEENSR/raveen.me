@@ -1,0 +1,136 @@
+---
+const projects = [
+  {
+    label: 'writing',
+    name: "Raveen's Blog",
+    description: 'Software engineering & tech',
+    url: 'https://www.blog.raveen.me',
+  },
+  {
+    label: 'building',
+    name: 'GitHub',
+    description: 'Open source & personal projects',
+    url: 'https://github.com/RAVEENSR',
+  },
+  {
+    label: 'research',
+    name: 'IEEE Papers',
+    description: 'Published academic work',
+    url: 'https://ieeexplore.ieee.org/author/37088335822',
+  },
+];
+
+const achievements = [
+  {
+    label: 'award',
+    name: 'Outstanding Contributions',
+    description: 'WSO2, 2020',
+  },
+  {
+    label: 'winner',
+    name: 'Hackadev 3.0',
+    description: 'UNDP Sri Lanka, 2017',
+  },
+  {
+    label: 'finalist',
+    name: 'IT Hack 2017',
+    description: 'Informatics Institute of Technology',
+  },
+  {
+    label: 'finalist',
+    name: 'BeThem Challenge',
+    description: '99X Technology, 2016',
+  },
+  {
+    label: 'competition',
+    name: 'IEEE Xtreme 10.0',
+    description: 'Global #708, Sri Lanka #146',
+  },
+  {
+    label: 'winner',
+    name: 'IESL Robo Games 2014',
+    description: 'School Category',
+  },
+];
+---
+
+<section id="projects">
+  <h2>Portfolio</h2>
+  <div class="card-grid">
+    {projects.map((p) => (
+      <a href={p.url} target="_blank" rel="noopener noreferrer" class="card">
+        <span class="card-label">{p.label}</span>
+        <span class="card-name">{p.name}</span>
+        <span class="card-desc">{p.description}</span>
+      </a>
+    ))}
+  </div>
+
+  <h3 class="sub-heading">Achievements</h3>
+  <div class="card-grid">
+    {achievements.map((a) => (
+      <div class="card">
+        <span class="card-label">{a.label}</span>
+        <span class="card-name">{a.name}</span>
+        <span class="card-desc">{a.description}</span>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: var(--space-md);
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    transition: border-color var(--transition), background var(--transition);
+  }
+
+  a.card:hover {
+    border-color: var(--accent);
+    background: var(--surface);
+    text-decoration: none;
+  }
+
+  .card-label {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
+  }
+
+  .card-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .card-desc {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+  }
+
+  .sub-heading {
+    margin-bottom: 0.75rem;
+    color: var(--text);
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  @media (max-width: 640px) {
+    .card-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

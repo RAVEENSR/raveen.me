@@ -1,0 +1,83 @@
+---
+const degrees = [
+  {
+    degree: 'MSc in Computer Science',
+    focus: 'Software Architecture, GPA 3.99',
+    institution: 'University of Moratuwa',
+    institutionUrl: 'https://uom.lk/',
+    period: '2022 — 2025',
+    detail: '',
+  },
+  {
+    degree: 'BEng in Computer Software Engineering',
+    focus: '1st Class Honours',
+    institution: 'University of Westminster',
+    institutionUrl: 'https://www.westminster.ac.uk/',
+    period: '2016 — 2019',
+    detail: '',
+  },
+];
+---
+
+<section id="education">
+  <h2>Education</h2>
+  <div class="degrees">
+    {degrees.map((d) => (
+      <div class="entry">
+        <div class="entry-header">
+          <h3>
+            {d.degree}
+            {d.focus && <span class="focus"> — {d.focus}</span>}
+          </h3>
+          <span class="period">{d.period}</span>
+        </div>
+        <p>{d.institutionUrl ? <a href={d.institutionUrl} target="_blank" rel="noopener noreferrer">{d.institution}</a> : d.institution}</p>
+        {d.detail && <p class="detail">{d.detail}</p>}
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .degrees {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .entry {
+    padding-left: var(--space-sm);
+    border-left: 2px solid var(--border);
+  }
+
+  .entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-sm);
+  }
+
+  .period {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    margin-left: auto;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .focus {
+    font-weight: 400;
+    color: var(--text-secondary);
+  }
+
+  p {
+    font-size: 0.9rem;
+  }
+
+  .detail {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+</style>

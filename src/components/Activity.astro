@@ -1,0 +1,210 @@
+---
+---
+
+<section id="activity">
+  <h2 class="section-title"><code>git log</code></h2>
+  <div class="graph-container">
+    <div id="contribution-graph" class="graph">
+      <p class="loading">Loading contributions...</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .section-title {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .section-title code {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.95rem;
+  }
+
+  .graph-container {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.85rem 1rem;
+    overflow: hidden;
+  }
+
+  .graph {
+    width: 100%;
+  }
+
+  .loading {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .graph :global(.months) {
+    display: flex;
+    font-size: 0.6rem;
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+  }
+
+  .graph :global(.months span) {
+    text-align: left;
+  }
+
+  .graph :global(.heatmap) {
+    display: flex;
+    width: 100%;
+  }
+
+  .graph :global(.week) {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .graph :global(.day) {
+    aspect-ratio: 1;
+    border-radius: 1px;
+    background: var(--border);
+    margin: 0.5px;
+  }
+
+  .graph :global(.day:hover) {
+    opacity: 0.75;
+  }
+
+  .graph :global(.day-label) {
+    font-size: 0.5rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+  }
+
+  .graph :global(.day-label-col) {
+    display: flex;
+    flex-direction: column;
+    margin-right: 3px;
+    flex-shrink: 0;
+    width: 1rem;
+  }
+
+  .graph :global(.day-label-col .day-label) {
+    flex: 1;
+  }
+
+  .graph :global(.heatmap-wrapper) {
+    position: relative;
+  }
+
+  .graph :global(.total) {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+  }
+</style>
+
+<script>
+  async function renderGraph() {
+    const container = document.getElementById('contribution-graph');
+    if (!container) return;
+
+    try {
+      const res = await fetch('https://github-contributions-api.jogruber.de/v4/raveensr?y=last');
+      const data = await res.json();
+      const contributions = data.contributions;
+
+      const weeks: { date: string; count: number; level: number }[][] = [];
+      let currentWeek: { date: string; count: number; level: number }[] = [];
+
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark' ||
+        (!document.documentElement.getAttribute('data-theme') &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+      const levels = isDark
+        ? ['#1a1a2e', '#1e3a5f', '#2563eb', '#4a90e2', '#93bbfd']
+        : ['#ebedf0', '#c6d8f7', '#7ba4e8', '#2563eb', '#1d4ed8'];
+
+      for (const day of contributions) {
+        const d = new Date(day.date);
+        if (currentWeek.length > 0 && d.getDay() === 0) {
+          weeks.push(currentWeek);
+          currentWeek = [];
+        }
+        currentWeek.push({ date: day.date, count: day.count, level: day.level });
+      }
+      if (currentWeek.length > 0) weeks.push(currentWeek);
+
+      const firstDay = new Date(contributions[0].date).getDay();
+      if (firstDay > 0) {
+        const pad = Array(firstDay).fill({ date: '', count: -1, level: -1 });
+        weeks[0] = [...pad, ...weeks[0]];
+      }
+
+      // Month labels
+      const months: { label: string; weekIndex: number }[] = [];
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      let lastMonth = -1;
+
+      for (let i = 0; i < weeks.length; i++) {
+        const validDay = weeks[i].find(d => d.date);
+        if (validDay) {
+          const m = new Date(validDay.date).getMonth();
+          if (m !== lastMonth) {
+            months.push({ label: monthNames[m], weekIndex: i });
+            lastMonth = m;
+          }
+        }
+      }
+
+      const dayLabels = ['', 'M', '', 'W', '', 'F', ''];
+      const totalWeeks = weeks.length;
+
+      let html = '<div class="heatmap-wrapper">';
+
+      // Month labels — positioned proportionally
+      html += '<div class="months" style="padding-left:calc(1rem + 3px);position:relative;height:1rem">';
+      for (const m of months) {
+        const pct = (m.weekIndex / totalWeeks) * 100;
+        html += `<span style="position:absolute;left:calc(${pct}%)">${m.label}</span>`;
+      }
+      html += '</div>';
+
+      // Day labels + grid
+      html += '<div style="display:flex">';
+
+      // Day label column
+      html += '<div class="day-label-col">';
+      for (const label of dayLabels) {
+        html += `<div class="day-label">${label}</div>`;
+      }
+      html += '</div>';
+
+      // Heatmap grid
+      html += '<div class="heatmap">';
+      for (const week of weeks) {
+        html += '<div class="week">';
+        for (let d = 0; d < 7; d++) {
+          const day = week[d];
+          if (!day || day.level === -1) {
+            html += '<div class="day" style="background:transparent"></div>';
+          } else {
+            const color = levels[day.level] || levels[0];
+            const title = `${day.date}: ${day.count} contribution${day.count !== 1 ? 's' : ''}`;
+            html += `<div class="day" style="background:${color}" title="${title}"></div>`;
+          }
+        }
+        html += '</div>';
+      }
+      html += '</div></div>';
+
+      html += '</div>';
+
+      const total = contributions.reduce((sum: number, d: { count: number }) => sum + d.count, 0);
+      html += `<p class="total">${total} contributions in the last year</p>`;
+
+      container.innerHTML = html;
+    } catch {
+      container.innerHTML = '<p class="loading">Could not load contributions.</p>';
+    }
+  }
+
+  renderGraph();
+</script>
