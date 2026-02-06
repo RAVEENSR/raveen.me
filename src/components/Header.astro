@@ -1,12 +1,5 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
-
-const navLinks = [
-  { label: 'about', href: '#about' },
-  { label: 'experience', href: '#experience' },
-  { label: 'portfolio', href: '#projects' },
-  { label: 'connect', href: '#contact' },
-];
 ---
 
 <header>
@@ -17,11 +10,6 @@ const navLinks = [
     </div>
     <ThemeToggle />
   </div>
-  <nav>
-    {navLinks.map((link) => (
-      <a href={link.href}>{link.label}</a>
-    ))}
-  </nav>
 </header>
 
 <style>
@@ -44,23 +32,5 @@ const navLinks = [
     color: var(--text-secondary);
     font-size: 1rem;
     margin-bottom: 0;
-  }
-
-  nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-sm);
-    margin-top: var(--space-md);
-  }
-
-  nav a {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    transition: color var(--transition);
-  }
-
-  nav a:hover {
-    color: var(--accent);
-    text-decoration: none;
   }
 </style>

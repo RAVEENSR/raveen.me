@@ -1,0 +1,170 @@
+---
+import { Image } from 'astro:assets';
+
+import f1Sparks from '../../public/images/photography/f1-sparks.jpg';
+import f1Overtake from '../../public/images/photography/f1-overtake.jpg';
+import qatarPalace from '../../public/images/photography/qatar-palace.jpg';
+import goldenThumb from '../../public/images/photography/golden-thumb.jpg';
+import statueOfLiberty from '../../public/images/photography/statue-of-liberty.jpg';
+import burjKhalifa from '../../public/images/photography/burj-khalifa.jpg';
+import dubaiMarina from '../../public/images/photography/dubai-marina.jpg';
+import lanternDusk from '../../public/images/photography/lantern-dusk.jpg';
+
+const photos = [
+  { src: f1Sparks, alt: 'Red Bull F1 car with sparks flying' },
+  { src: qatarPalace, alt: 'Ornate building with turquoise pool in Qatar' },
+  { src: statueOfLiberty, alt: 'Statue of Liberty' },
+  { src: dubaiMarina, alt: 'Dubai Marina skyline at night' },
+  { src: f1Overtake, alt: 'Red Bull overtaking Aston Martin' },
+  { src: goldenThumb, alt: 'Giant golden thumb sculpture in Doha' },
+  { src: burjKhalifa, alt: 'Burj Khalifa daytime' },
+  { src: lanternDusk, alt: 'Lantern against sunset sky' },
+];
+---
+
+<section id="photography">
+  <h2>Photography</h2>
+  <div class="masonry">
+    {photos.map((photo) => (
+      <button type="button" class="photo-item" data-full={photo.src.src} data-alt={photo.alt}>
+        <Image
+          src={photo.src}
+          alt={photo.alt}
+          widths={[400, 600]}
+          sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 33vw"
+          loading="lazy"
+        />
+      </button>
+    ))}
+  </div>
+  <div id="photo-lightbox" class="lightbox" aria-hidden="true">
+    <button type="button" class="lightbox-close" aria-label="Close">&times;</button>
+    <img class="lightbox-img" src="" alt="" />
+  </div>
+  <p class="instagram-link">
+    <a href="https://www.instagram.com/raveensr/" target="_blank" rel="noopener noreferrer">
+      See more on Instagram &rarr;
+    </a>
+  </p>
+</section>
+
+<style>
+  .masonry {
+    columns: 3;
+    column-gap: 0.75rem;
+  }
+
+  .photo-item {
+    display: block;
+    margin-bottom: 0.75rem;
+    break-inside: avoid;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: none;
+    padding: 0;
+    background: none;
+    cursor: pointer;
+    transition: transform var(--transition), box-shadow var(--transition);
+  }
+
+  .photo-item:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .photo-item img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+  }
+
+  .lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.9);
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    cursor: pointer;
+  }
+
+  .lightbox[aria-hidden='false'] {
+    display: flex;
+  }
+
+  .lightbox-img {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: var(--radius);
+    cursor: default;
+  }
+
+  .lightbox-close {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0.25rem 0.5rem;
+    opacity: 0.8;
+    transition: opacity var(--transition);
+  }
+
+  .lightbox-close:hover {
+    opacity: 1;
+  }
+
+  .instagram-link {
+    text-align: center;
+    margin-top: var(--space-sm);
+  }
+
+  @media (max-width: 768px) {
+    .masonry {
+      columns: 2;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .masonry {
+      columns: 1;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var lightbox = document.getElementById('photo-lightbox');
+    var lbImg = lightbox.querySelector('.lightbox-img');
+
+    document.querySelectorAll('#photography .photo-item').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        lbImg.src = btn.getAttribute('data-full');
+        lbImg.alt = btn.getAttribute('data-alt');
+        lightbox.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    function close() {
+      lightbox.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    lightbox.querySelector('.lightbox-close').addEventListener('click', close);
+    lightbox.addEventListener('click', function (e) {
+      if (e.target === lightbox) close();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && lightbox.getAttribute('aria-hidden') === 'false') close();
+    });
+  })();
+</script>
