@@ -9,9 +9,9 @@
 <style>
   .f1-toast {
     position: fixed;
-    bottom: -100px;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     background: #1e2452;
     color: #fff;
     padding: 1rem 1.5rem;
@@ -19,15 +19,11 @@
     z-index: 1000;
     text-align: center;
     opacity: 0;
-    transition: bottom 0.5s ease, opacity 0.5s ease;
+    transition: opacity 0.5s ease;
     max-width: 90vw;
     font-size: 0.9rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  }
-
-  .f1-toast.visible {
-    bottom: 2rem;
-    opacity: 1;
+    pointer-events: none;
   }
 
   .f1-line {
@@ -42,41 +38,3 @@
   }
 </style>
 
-<script is:inline>
-  (function () {
-    var name = document.getElementById('site-name');
-    if (!name) return;
-
-    var clickCount = 0;
-    var clickTimer;
-
-    name.addEventListener('click', function () {
-      clickCount++;
-      clearTimeout(clickTimer);
-
-      if (clickCount === 3) {
-        clickCount = 0;
-        showToast();
-      } else {
-        clickTimer = setTimeout(function () { clickCount = 0; }, 400);
-      }
-    });
-
-    function showToast() {
-      var toast = document.getElementById('f1-toast');
-      if (!toast || toast.dataset.showing === 'true') return;
-
-      toast.dataset.showing = 'true';
-      toast.style.bottom = '2rem';
-      toast.style.opacity = '1';
-      toast.setAttribute('aria-hidden', 'false');
-
-      setTimeout(function () {
-        toast.style.bottom = '-100px';
-        toast.style.opacity = '0';
-        toast.setAttribute('aria-hidden', 'true');
-        toast.dataset.showing = 'false';
-      }, 8000);
-    }
-  })();
-</script>

@@ -219,32 +219,32 @@
     }
   }
 
-  // Triple-click easter egg on heading
-  const heading = document.querySelector('#activity .section-title');
-  if (heading) {
-    let clickCount = 0;
-    let clickTimer: ReturnType<typeof setTimeout>;
+  // Triple-click easter egg on heading or graph
+  let clickCount = 0;
+  let clickTimer: ReturnType<typeof setTimeout>;
 
-    heading.addEventListener('click', () => {
-      clickCount++;
-      clearTimeout(clickTimer);
+  function handleTripleClick() {
+    clickCount++;
+    clearTimeout(clickTimer);
 
-      if (clickCount === 3) {
-        clickCount = 0;
-        raceMode = !raceMode;
-        console.log(raceMode ? 'Switching to Race Mode \u{1F3CE}\uFE0F' : 'Back to normal mode');
+    if (clickCount === 3) {
+      clickCount = 0;
+      raceMode = !raceMode;
+      console.log(raceMode ? 'Switching to Race Mode \u{1F3CE}\uFE0F' : 'Back to normal mode');
 
-        if (cachedData) {
-          const container = document.getElementById('contribution-graph');
-          if (container) {
-            container.innerHTML = buildGraph(cachedData, getLevels(raceMode));
-          }
+      if (cachedData) {
+        const container = document.getElementById('contribution-graph');
+        if (container) {
+          container.innerHTML = buildGraph(cachedData, getLevels(raceMode));
         }
-      } else {
-        clickTimer = setTimeout(() => { clickCount = 0; }, 400);
       }
-    });
+    } else {
+      clickTimer = setTimeout(() => { clickCount = 0; }, 400);
+    }
   }
+
+  document.querySelector('#activity .section-title')?.addEventListener('click', handleTripleClick);
+  document.querySelector('#activity .graph-container')?.addEventListener('click', handleTripleClick);
 
   renderGraph();
 </script>
